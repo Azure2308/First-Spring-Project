@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: start-spring-proj
+
+my-config:
+  name: my-config-dev
+  list:
+    - I`m
+    - dev
+
+env-variable: ${ENV_VARIABLE:default}
