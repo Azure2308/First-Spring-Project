@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring_skb_db
+    username: postgres
+    password: 23082005Esipov
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
