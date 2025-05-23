@@ -8,19 +8,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
 public class RequestLimitService {
-    private final RequestLimitProperty requestLimitProperty;
-    private final Map<String, Integer> requestsCount = new HashMap<>();
 
-    public synchronized void checkCountRequest(String name) {
-        int currentCount = requestsCount.getOrDefault(name, 0);
-        if (currentCount >= requestLimitProperty.getRequestsCount()) {
+    private final RequestLimitProperty requestLimitProperty;
+
+    private final Map<String, AtomicInteger> requestsCount = new ConcurrentHashMap<>();
+
+    public void checkCountRequest(String name) {
+        int currentCount = requestsCount
+                .computeIfAbsent(name, key -> new AtomicInteger())
+                .incrementAndGet();
+
+        if (currentCount > requestLimitProperty.getRequestsCount()) {
             throw new RequestLimitException("Request limit for method: " + name);
         }
-
-        requestsCount.put(name, currentCount + 1);
     }
 }
