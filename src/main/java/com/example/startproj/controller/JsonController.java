@@ -1,7 +1,10 @@
 package com.example.startproj.controller;
 
-import com.example.startproj.dto.Request;
+import com.example.startproj.dto.RequestDto;
+import com.example.startproj.dto.ResponseDto;
 import com.example.startproj.exceptions.BadGatewayExceptions;
+import com.example.startproj.service.RequestService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,20 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Random;
 
 @RestController
+@AllArgsConstructor
 public class JsonController {
 
-    private final Random random = new Random();
+    private final RequestService requestService;
 
     @PostMapping("/post")
-    public Request getRequest(@RequestBody Request request){
-        long id = random.nextLong(1000) + 1;
-        //long id = 0L;
-
-        if (id == 0) {
-            throw new BadGatewayExceptions("Id can't be equal to 0: %s".formatted(request.toString()));
-        }
-
-        request.getInfo().setId(id);
-        return request;
+    public ResponseDto getRequest(@RequestBody RequestDto request){
+        return requestService.processRequest(request);
     }
 }
