@@ -2,48 +2,41 @@ package com.example.startproj;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class Airplane {
+    private final Engine keroseneEngine;
 
-    //Внедрение через констуктор.
-    //Тут внедрится KeroseneEngine, так как у него аннотация @Primal
-    private final Engine constEngine;
-
-    //Внедрение через поле.
-    //Тут уже внедрится PetrolEngine, так как мы его явно указываем через @Qualifier
     @Autowired
-    @Qualifier("petrolEngine")
-    private Engine fieldEngine;
+    private Engine petrolEngine;
 
-    //Внедрение через сеттер.
+    @Setter(onMethod_ = {@Autowired, @Qualifier("petrolEngine")})
     private Engine setterEngine;
 
-    public Airplane(Engine constEngine) {
-        this.constEngine = constEngine;
-    }
-
-    @Autowired
-    public void setSetterEngine(Engine setterEngine) {
-        this.setterEngine = setterEngine;
+    public Airplane(Engine keroseneEngine) {
+        this.keroseneEngine = keroseneEngine;
     }
 
     @PostConstruct
     public void postConstruct() {
-        System.out.println("Airplane init.");
+        log.info("Airplane init.");
     }
 
     @PreDestroy
     public void preDestroy() {
-        System.out.println("Airplane destroy.");
+        log.info("Airplane destroy.");
     }
 
     public void printEngines() {
-        System.out.println("Constructor Engine: " + constEngine.getClass().getSimpleName());
-        System.out.println("Field Engine: " + fieldEngine.getClass().getSimpleName());
-        System.out.println("Setter Engine: " + setterEngine.getClass().getSimpleName());
+        log.info("Constructor Engine: " + keroseneEngine.getClass().getSimpleName());
+        log.info("Field Engine: " + petrolEngine.getClass().getSimpleName());
+        log.info("Setter Engine: " + setterEngine.getClass().getSimpleName());
     }
 }
